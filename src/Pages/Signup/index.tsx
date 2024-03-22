@@ -20,6 +20,7 @@ import {dimensions} from '../../Consts/dimensions';
 import {fontSizes} from '../../Consts/fontSizes';
 import {styles} from './styles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {ProfilePicture} from '../../Components/ProfilePicture';
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Signup'> {}
 export const Signup = ({navigation}: Props) => {
@@ -70,9 +71,7 @@ export const Signup = ({navigation}: Props) => {
             </Text>
           </View>
           <View style={styles.body}>
-            <TouchableOpacity style={{alignSelf: 'center'}}>
-              <Avatar.Icon size={100} icon="folder" />
-            </TouchableOpacity>
+            <ProfilePicture onUpload={iamgeUri => console.log(iamgeUri)} />
             <View>
               <Controller
                 control={control}
