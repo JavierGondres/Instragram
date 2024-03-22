@@ -197,7 +197,9 @@ export const Login = ({navigation}: Props) => {
               </Text>
               <Divider style={{flex: 0.5}} />
             </View>
-            <TouchableOpacity style={styles.containerHAccount}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Signup')}
+              style={styles.containerHAccount}>
               <Text
                 style={{
                   color: theme.colors.secondary,

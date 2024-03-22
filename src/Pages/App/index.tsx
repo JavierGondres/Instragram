@@ -13,6 +13,8 @@ import {
 import {lightcolors, darkColors} from '../../Consts/colors';
 import {StatusBar, useColorScheme} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {Signup} from '../Signup';
+import {goBack, navigationRef} from '../../utils/navigationref/rootNavigation';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppStack = () => {
@@ -24,7 +26,14 @@ const AppStack = () => {
         name="Login"
         component={Login}
         options={{
-          header: () => <MainAppBarHeader onBack={() => console.log(';')} />,
+          header: () => <MainAppBarHeader onBack={() => goBack()} />,
+        }}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={Signup}
+        options={{
+          header: () => <MainAppBarHeader onBack={() => goBack()} />,
         }}
       />
     </Stack.Navigator>
@@ -39,7 +48,7 @@ const App = () => {
       : {...MD3LightTheme, colors: lightcolors};
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <PaperProvider theme={paperTheme}>
         <GestureHandlerRootView style={{flex: 1}}>
           <AppStack />
