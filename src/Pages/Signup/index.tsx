@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useContext} from 'react';
 import {RootStackParamList} from '../App/types';
 import {
   SafeAreaView,
@@ -21,12 +21,22 @@ import {fontSizes} from '../../Consts/fontSizes';
 import {styles} from './styles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ProfilePicture} from '../../Components/ProfilePicture';
+import AuthContext from '../../Contexts/AuthContext';
+
+export type FormValues = {
+  email: string;
+  fullName: string;
+  userName: string;
+  password: string;
+};
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Signup'> {}
 export const Signup = ({navigation}: Props) => {
   const theme = useTheme();
   const colorScheme = useColorScheme();
   const {width} = useWindowDimensions();
+  const {signUp, isLoading} = useContext(AuthContext);
+
   const {
     control,
     handleSubmit,
@@ -38,11 +48,21 @@ export const Signup = ({navigation}: Props) => {
       fullName: '',
       userName: '',
       password: '',
-    },
+    } as FormValues,
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async ({
+    email,
+    fullName,
+    password,
+    userName,
+  }: FormValues) => {
+    try {
+      const opa = null;
+      await signUp({email, fullName, password, profilePicture: opa, userName});
+    } catch (error) {
+      console.error('Error in onSubmit from signup: ', error);
+    }
   };
 
   return (
@@ -210,6 +230,7 @@ export const Signup = ({navigation}: Props) => {
             </View>
 
             <Button
+              loading={isLoading}
               disabled={!isValid}
               onPress={handleSubmit(onSubmit)}
               contentStyle={{

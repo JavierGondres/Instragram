@@ -15,6 +15,7 @@ import {StatusBar, useColorScheme} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Signup} from '../Signup';
 import {goBack, navigationRef} from '../../utils/navigationref/rootNavigation';
+import {AuthProvider} from '../../Contexts/AuthContext';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppStack = () => {
@@ -51,7 +52,9 @@ const App = () => {
     <NavigationContainer ref={navigationRef}>
       <PaperProvider theme={paperTheme}>
         <GestureHandlerRootView style={{flex: 1}}>
-          <AppStack />
+          <AuthProvider>
+            <AppStack />
+          </AuthProvider>
         </GestureHandlerRootView>
       </PaperProvider>
     </NavigationContainer>
