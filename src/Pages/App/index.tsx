@@ -15,10 +15,12 @@ import {StatusBar, useColorScheme} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Signup} from '../Signup';
 import {goBack, navigationRef} from '../../utils/navigationref/rootNavigation';
-import {AuthProvider} from '../../Contexts/AuthContext';
+import AuthContext, {AuthProvider} from '../../Contexts/AuthContext';
+import { useContext } from 'react';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppStack = () => {
+  const {userData, isLoading} = useContext(AuthContext);
   const theme = useTheme();
   StatusBar.setBackgroundColor(theme.colors.background);
   return (

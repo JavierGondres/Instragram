@@ -12,7 +12,32 @@ const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
 export const AuthProvider = ({children}: AuthProviderProps) => {
   const [userData, setUserData] = useState<UserData>();
+  const [accounts, setAccounts] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkUserAuthentication = async () => {
+      try {
+        const storedUserData = await AsyncStorage.getItem('userData');
+        if (storedUserData) {
+          const result = await usersManager.get(
+            (JSON.parse(storedUserData) as UserData).id,
+          );
+          if (result) {
+            setUserData(result);
+            const savedAccounts = await loadSavedAccounts();
+            if (savedAccounts) setAccounts(savedAccounts);
+          }
+        }
+      } catch (error) {
+        console.error('Error al checkUserAuthentication: ', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkUserAuthentication();
+  }, []);
 
   const updateUserData = async (userData: UserData) => {
     try {
@@ -20,6 +45,46 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
       setUserData(prevData => ({...prevData, ...userData}));
     } catch (error) {
       handleError('Hubo un error al actualizar la información del usuario.');
+    }
+  };
+
+  const loadSavedAccounts = async (): Promise<string[] | null> => {
+    try {
+      const storedAccounts = await AsyncStorage.getItem('accounts');
+      if (!storedAccounts) return null;
+      const newStoredAccounts = JSON.parse(storedAccounts) as string[];
+      return Array.isArray(newStoredAccounts) ? newStoredAccounts : [];
+    } catch (error) {
+      console.error('Hubo un error en loadSavedAccounts', error);
+      throw error;
+    }
+  };
+
+  const saveAccounts = async (id: string) => {
+    try {
+      const storedAccounts = await AsyncStorage.getItem('accounts');
+      let newStoredAccounts: string[] = [];
+      if (storedAccounts) {
+        newStoredAccounts = JSON.parse(storedAccounts) as string[];
+        if (!Array.isArray(newStoredAccounts)) newStoredAccounts = [];
+      }
+      const accountIdIndex = newStoredAccounts.findIndex(
+        account => account === id,
+      );
+      if (accountIdIndex === -1) {
+        console.log('No existe la cuenta, así que se agrega');
+        newStoredAccounts.push(id);
+        await AsyncStorage.setItem(
+          'accounts',
+          JSON.stringify(newStoredAccounts),
+        );
+        setAccounts(newStoredAccounts);
+      } else {
+        console.log('La cuenta ya existe');
+      }
+    } catch (error) {
+      console.error('Hubo un error en saveAccounts', error);
+      throw error;
     }
   };
 
@@ -35,6 +100,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
       }
 
       await updateUserData(user);
+      await saveAccounts(user.id);
     } catch (error) {
       console.log('Error in login: ', error);
       handleError();
@@ -83,10 +149,16 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
       navigate('Login');
     } catch (error) {
       console.log('Error in signup: ', error);
+      handleError(
+        'Error al tratar de registrarse, vuelve a verificar tus campos',
+      );
     } finally {
       setIsLoading(false);
     }
   };
+
+  console.log('User: ', userData?.userName);
+  console.log('Cuentas: ', accounts);
 
   return (
     <AuthContext.Provider

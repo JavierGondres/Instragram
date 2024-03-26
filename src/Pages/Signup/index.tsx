@@ -41,7 +41,7 @@ export const Signup = ({navigation}: Props) => {
   const {
     control,
     handleSubmit,
-    formState: {errors, isValid},
+    formState: {errors},
   } = useForm({
     resolver: yupResolver(loginSchema),
     defaultValues: {
@@ -123,7 +123,13 @@ export const Signup = ({navigation}: Props) => {
                 name="email"
               />
               {errors.email && (
-                <Text variant="labelLarge" style={{color: theme.colors.error}}>
+                <Text
+                  variant={
+                    width <= dimensions.medium.width
+                      ? 'bodySmall'
+                      : 'labelLarge'
+                  }
+                  style={{color: theme.colors.error, marginTop: spacings.s1}}>
                   {errors.email.message}
                 </Text>
               )}
@@ -157,7 +163,13 @@ export const Signup = ({navigation}: Props) => {
                 name="fullName"
               />
               {errors.fullName && (
-                <Text variant="labelLarge" style={{color: theme.colors.error}}>
+                <Text
+                  variant={
+                    width <= dimensions.medium.width
+                      ? 'bodySmall'
+                      : 'labelLarge'
+                  }
+                  style={{color: theme.colors.error, marginTop: spacings.s1}}>
                   {errors.fullName.message}
                 </Text>
               )}
@@ -191,7 +203,13 @@ export const Signup = ({navigation}: Props) => {
                 name="userName"
               />
               {errors.userName && (
-                <Text variant="labelLarge" style={{color: theme.colors.error}}>
+                <Text
+                  variant={
+                    width <= dimensions.medium.width
+                      ? 'bodySmall'
+                      : 'labelLarge'
+                  }
+                  style={{color: theme.colors.error, marginTop: spacings.s1}}>
                   {errors.userName.message}
                 </Text>
               )}
@@ -225,7 +243,13 @@ export const Signup = ({navigation}: Props) => {
                 name="password"
               />
               {errors.password && (
-                <Text variant="labelLarge" style={{color: theme.colors.error}}>
+                <Text
+                  variant={
+                    width <= dimensions.medium.width
+                      ? 'bodySmall'
+                      : 'labelLarge'
+                  }
+                  style={{color: theme.colors.error, marginTop: spacings.s1}}>
                   {errors.password.message}
                 </Text>
               )}
@@ -233,11 +257,11 @@ export const Signup = ({navigation}: Props) => {
 
             <Button
               loading={isLoading}
-              disabled={!isValid}
+              // disabled={!isValid}
               onPress={handleSubmit(onSubmit)}
               contentStyle={{
                 backgroundColor: theme.colors.primary,
-                opacity: !isValid ? 0.5 : 1,
+                // opacity: !isValid ? 0.5 : 1,
               }}
               style={{borderRadius: spacings.s1, marginBottom: spacings.s2}}
               labelStyle={{
