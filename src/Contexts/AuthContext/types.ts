@@ -3,6 +3,7 @@ import {UserData} from '../../ServicesDB/Users/types';
 
 export type AuthContextProps = {
   userData?: UserData;
+  savedAccounts: string[];
   isLoading: boolean;
   signUp: ({
     email,
@@ -12,6 +13,7 @@ export type AuthContextProps = {
     profilePicture,
   }: signup) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
   updateUserData: (userData: UserData) => Promise<void>;
 };
 

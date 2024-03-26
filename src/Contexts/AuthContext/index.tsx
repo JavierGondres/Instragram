@@ -12,9 +12,14 @@ const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
 export const AuthProvider = ({children}: AuthProviderProps) => {
   const [userData, setUserData] = useState<UserData>();
-  const [accounts, setAccounts] = useState<string[]>([]);
+  const [savedAccounts, setSavedAccounts] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  /*
+  Se ejecuta el autoLogin si la data del usuario se encuentra en el storage y si es así
+  también se llaman las cuentas con las cuales ha iniciado sesión el usuario desde el
+  storage
+  */
   useEffect(() => {
     const checkUserAuthentication = async () => {
       try {
@@ -26,7 +31,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
           if (result) {
             setUserData(result);
             const savedAccounts = await loadSavedAccounts();
-            if (savedAccounts) setAccounts(savedAccounts);
+            if (savedAccounts) setSavedAccounts(savedAccounts);
           }
         }
       } catch (error) {
@@ -39,6 +44,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     checkUserAuthentication();
   }, []);
 
+  //Se actualiza la data del usuario en el storage
   const updateUserData = async (userData: UserData) => {
     try {
       await AsyncStorage.setItem('userData', JSON.stringify(userData));
@@ -48,6 +54,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
+  //Se cargan las cuentas guardadas en el storage
   const loadSavedAccounts = async (): Promise<string[] | null> => {
     try {
       const storedAccounts = await AsyncStorage.getItem('accounts');
@@ -60,6 +67,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
+  //Se guardan los id de los usuarios con las cuales se inicia sesion
   const saveAccounts = async (id: string) => {
     try {
       const storedAccounts = await AsyncStorage.getItem('accounts');
@@ -78,7 +86,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
           'accounts',
           JSON.stringify(newStoredAccounts),
         );
-        setAccounts(newStoredAccounts);
+        setSavedAccounts(newStoredAccounts);
       } else {
         console.log('La cuenta ya existe');
       }
@@ -88,6 +96,10 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
+  /*
+  Incia sesion en la app, también se actualiza la data del usuario en el storage
+  y se agrega las cuentas que se iniciaron sesión en el storage. 
+  */
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
@@ -109,6 +121,9 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
+  /*
+  Se registran los usuarios
+  */
   const signUp = async ({
     email,
     fullName,
@@ -157,16 +172,33 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
+  //Cierra sesion la cuenta del usuario y borra la data del usuario en el storage
+  const signOut = async () => {
+    setIsLoading(true);
+    try {
+      await auth().signOut();
+      await AsyncStorage.removeItem('userData');
+      setUserData(undefined);
+    } catch (error) {
+      console.error('Error in signOut: ', error);
+      handleError('Error al cerrar sesión. Por favor, inténtalo de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   console.log('User: ', userData?.userName);
-  console.log('Cuentas: ', accounts);
+  console.log('Cuentas: ', savedAccounts);
 
   return (
     <AuthContext.Provider
       value={{
         userData,
+        savedAccounts,
         isLoading,
         signUp,
         signIn,
+        signOut,
         updateUserData,
       }}>
       {children}
