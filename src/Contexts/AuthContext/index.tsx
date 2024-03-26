@@ -1,7 +1,7 @@
 import React, {createContext, useEffect, useState} from 'react';
 import {UserData} from '../../ServicesDB/Users/types';
 import {AuthContextProps, AuthProviderProps, signup} from './types';
-import auth from '@react-native-firebase/auth';
+import auth, {firebase} from '@react-native-firebase/auth';
 import {usersManager} from '../../ServicesDB/Users';
 import {handleError} from '../../utils/handleErrors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -121,6 +121,29 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
+  const signInWithId = async (id: string) => {
+    setIsLoading(true);
+    try {
+      await auth().signInWithCustomToken(id);
+
+      const user = await usersManager.get(id);
+
+      if (!user) {
+        handleError('No se pudo recuperar el usuario');
+        return;
+      }
+
+      await updateUserData(user);
+      await saveAccounts(user.id);
+      console.log('Logeado');
+    } catch (error) {
+      console.error('Error in signInWithId: ', error);
+      handleError();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   /*
   Se registran los usuarios
   */
@@ -198,6 +221,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         isLoading,
         signUp,
         signIn,
+        signInWithId,
         signOut,
         updateUserData,
       }}>

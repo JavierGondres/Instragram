@@ -17,6 +17,7 @@ import {Signup} from '../Signup';
 import {goBack, navigationRef} from '../../utils/navigationref/rootNavigation';
 import AuthContext, {AuthProvider} from '../../Contexts/AuthContext';
 import { useContext } from 'react';
+import { SwitchAccount } from '../SwitchAccount';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppStack = () => {
@@ -24,7 +25,14 @@ const AppStack = () => {
   const theme = useTheme();
   StatusBar.setBackgroundColor(theme.colors.background);
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="SwitchAccount">
+      <Stack.Screen
+        name="SwitchAccount"
+        component={SwitchAccount}
+        options={{
+          header: () => <MainAppBarHeader/>,
+        }}
+      />
       <Stack.Screen
         name="Login"
         component={Login}

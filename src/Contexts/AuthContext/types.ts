@@ -13,6 +13,7 @@ export type AuthContextProps = {
     profilePicture,
   }: signup) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithId: (id: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateUserData: (userData: UserData) => Promise<void>;
 };
