@@ -1719,6 +1719,11 @@
   resolved "https://registry.npmjs.org/@react-native-firebase/firestore/-/firestore-19.0.1.tgz"
   integrity sha512-e/lI2onUuFM5zFVMzEt4e4FFbok/CgACD8jiwPZamtRRDXOaL6xnFeJY4CWvREEp5c8rRDGc4O5OsOU9Gpi/7A==
 
+"@react-native-firebase/storage@^19.1.0":
+  version "19.1.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-19.1.0.tgz#768840e31365f801ae56f66e6e3739ed2cd61197"
+  integrity sha512-1Jh1kTFNwZOb5293E4Z2aq97bhYqOA4aK1se5hKuoni0y80hau0rnFIyVkp6kdgt+gNFZCYbbA7QmZeVzV/gSQ==
+
 "@react-native/assets-registry@0.73.1":
   version "0.73.1"
   resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.73.1.tgz"

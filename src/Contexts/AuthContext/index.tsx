@@ -5,6 +5,8 @@ import auth from '@react-native-firebase/auth';
 import {usersManager} from '../../ServicesDB/Users';
 import {handleError} from '../../utils/handleErrors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from '@react-native-firebase/storage';
+import {navigate} from '../../utils/navigationref/rootNavigation';
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
@@ -33,7 +35,6 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
       }
 
       await updateUserData(user);
-      console.log("LOGEADo")
     } catch (error) {
       console.log('Error in login: ', error);
       handleError();
@@ -58,15 +59,28 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
       const userId = userCredential?.user?.uid;
 
+      let downloadUrl = null;
+      if (profilePicture) {
+        const reference = storage().ref(`profilePictures/${userId}`);
+
+        await reference.putFile(profilePicture);
+        downloadUrl = await reference.getDownloadURL();
+        console.log('Image uploaded to Firebase Storage:', downloadUrl);
+      }
+
       const userData = {
         id: userId,
         email,
         fullName,
-        profilePicture,
+        profilePicture: downloadUrl,
         userName,
       } as UserData;
 
       await usersManager.create(userData);
+
+      await AsyncStorage.removeItem('userData');
+      setUserData(undefined);
+      navigate('Login');
     } catch (error) {
       console.log('Error in signup: ', error);
     } finally {
@@ -81,7 +95,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         isLoading,
         signUp,
         signIn,
-        updateUserData
+        updateUserData,
       }}>
       {children}
     </AuthContext.Provider>

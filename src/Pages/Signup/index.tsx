@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {RootStackParamList} from '../App/types';
 import {
   SafeAreaView,
@@ -36,6 +36,7 @@ export const Signup = ({navigation}: Props) => {
   const colorScheme = useColorScheme();
   const {width} = useWindowDimensions();
   const {signUp, isLoading} = useContext(AuthContext);
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
 
   const {
     control,
@@ -58,8 +59,7 @@ export const Signup = ({navigation}: Props) => {
     userName,
   }: FormValues) => {
     try {
-      const opa = null;
-      await signUp({email, fullName, password, profilePicture: opa, userName});
+      await signUp({email, fullName, password, profilePicture, userName});
     } catch (error) {
       console.error('Error in onSubmit from signup: ', error);
     }
@@ -91,7 +91,9 @@ export const Signup = ({navigation}: Props) => {
             </Text>
           </View>
           <View style={styles.body}>
-            <ProfilePicture onUpload={iamgeUri => console.log(iamgeUri)} />
+            <ProfilePicture
+              onUpload={imageUri => setProfilePicture(imageUri)}
+            />
             <View>
               <Controller
                 control={control}
