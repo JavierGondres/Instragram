@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useContext} from 'react';
 import {RootStackParamList} from '../App/types';
 import {
   SafeAreaView,
@@ -20,12 +20,15 @@ import {dimensions} from '../../Consts/dimensions';
 import {fontSizes} from '../../Consts/fontSizes';
 import {styles} from './styles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import AuthContext from '../../Contexts/AuthContext';
 
 interface Props extends NativeStackScreenProps<RootStackParamList, 'Login'> {}
 export const Login = ({navigation}: Props) => {
   const theme = useTheme();
   const colorScheme = useColorScheme();
   const {width} = useWindowDimensions();
+  const {signIn, isLoading} = useContext(AuthContext);
+
   const {
     control,
     handleSubmit,
@@ -38,8 +41,12 @@ export const Login = ({navigation}: Props) => {
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (email: string, password: string) => {
+    try {
+      await signIn(email, password);
+    } catch (error) {
+      console.log('Error en onSubmitLogin: ', error);
+    }
   };
 
   return (
@@ -141,8 +148,12 @@ export const Login = ({navigation}: Props) => {
 
           <View style={styles.midContainer}>
             <Button
+              loading={isLoading}
               disabled={!isValid}
-              onPress={handleSubmit(onSubmit)}
+              onPress={handleSubmit(
+                async (data: {email: string; password: string}) =>
+                  await onSubmit(data.email, data.password),
+              )}
               contentStyle={{
                 backgroundColor: theme.colors.primary,
                 opacity: !isValid ? 0.5 : 1,

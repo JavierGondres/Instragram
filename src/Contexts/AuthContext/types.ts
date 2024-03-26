@@ -11,6 +11,8 @@ export type AuthContextProps = {
     userName,
     profilePicture,
   }: signup) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  updateUserData: (userData: UserData) => Promise<void>;
 };
 
 export interface AuthProviderProps {
